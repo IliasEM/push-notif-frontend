@@ -62,8 +62,6 @@
     },
     async created () {
       await this.setSubscribers()
-
-      console.log(this.subscribers)
     },
     methods: {
       ...mapActions([

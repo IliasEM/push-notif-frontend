@@ -20,15 +20,10 @@ import './plugins/chartist'
 import './plugins/vee-validate'
 import vuetify from './plugins/vuetify'
 import i18n from './i18n'
-import Axios from 'axios'
 
 Vue.config.productionTip = false
 
 require('./notification-service')
-
-Axios.get('https://api.ipify.org?format=json').then(response => {
-  console.log(response.data.ip)
-})
 
 new Vue({
   router,

@@ -11,8 +11,7 @@ if ('serviceWorker' in navigator) {
   } else if (Notification.permission !== 'denied') {
     Notification.requestPermission().then(function (permission) {
       if (permission === 'granted') {
-        console.log('Registering service worker')
-        run().catch(error => console.error(error))
+        run()
       }
     })
   }
@@ -24,7 +23,6 @@ function urlB64ToUint8Array (base64String) {
       .replace(/-/g, '+')
       .replace(/_/g, '/')
 
-  console.log(base64)
   const rawData = window.atob(base64)
   const outputArray = new Uint8Array(rawData.length)
 
@@ -36,12 +34,8 @@ function urlB64ToUint8Array (base64String) {
 
 async function run () {
   if ('serviceWorker' in navigator && 'PushManager' in window) {
-    console.log('Service Worker and Push is supported')
-
     navigator.serviceWorker.register('/worker.js')
         .then(function (swReg) {
-            console.log('service worker registered')
-
             swRegistration = swReg
 
             swRegistration.pushManager.getSubscription()
@@ -49,35 +43,22 @@ async function run () {
                     isSubscribed = subscription !== null
 
                     if (isSubscribed) {
-                        console.log('User is subscribed')
                     } else {
                         swRegistration.pushManager.subscribe({
                                 userVisibleOnly: true,
                                 applicationServerKey: urlB64ToUint8Array(applicationKey),
                             })
                             .then(function (subscription) {
-                                console.log(subscription)
-                                console.log('User is subscribed')
-
                                 saveSubscription(subscription)
 
                                 isSubscribed = true
                             })
-                            .catch(function (err) {
-                                console.log('Failed to subscribe user: ', err)
-                            })
                     }
                 })
         })
-        .catch(function (error) {
-            console.error('Service Worker Error', error)
-        })
-  } else {
-      console.warn('Push messaging is not supported')
   }
 }
 
 function saveSubscription (subscription) {
-  console.log(JSON.stringify(subscription))
   Axios.post('http://localhost:3000/subscribe', subscription)
 }
